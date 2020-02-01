@@ -28,12 +28,13 @@ class PID:
         self.zero_offset = 305
         self.fwd_zero_offset = 317
         self.bwd_zero_offset = 296
-
-        if not self.sensor.init():
-            exit(1)
-        if not self.sensor.read():
-            exit(1)
-
+        try:
+          if not self.sensor.init():
+              exit(1)
+          if not self.sensor.read():
+              exit(1)
+        except:
+            pass
         self.depth = 0.0
         self.sensor_offset = self.sensor.depth()
         self.SetPoint = self.sensor_offset
@@ -110,7 +111,13 @@ class PID:
         self.sensor_offset =  0
 
     def get_Temp(self,event):
-        self.emit_Signal ('Send_Temp',self.sensor.temperature(ms5837.UNITS_Centigrade) )
+        try:
+            self.sensor.read()
+        except OSError:
+            return
+
+        temp = self.sensor.temperature(ms5837.UNITS_Centigrade)
+        self.emit_Signal ('Send_Temp',temp )
 
     def set_Setpoint_to_depth(self,event_name,flag):
         if flag and self.pilot_enable:
@@ -157,5 +164,7 @@ class PID:
 #               else:
 #                    time.sleep(self.sample_time/10)
         except KeyboardInterrupt:
-            self.emit_Signal("PID",self.pwm_zero)
+#            self.emit_Signal("PID",self.pwm_zero)
+             pass
+
 

@@ -29,16 +29,16 @@ class Hat:
         self.forward_micro = 4000
 
         # for Magazine
-        self.IN1 = 20 
-        self.IN2 = 21
-        self.ENA = 16
-        self.ENA_PWM = 0
-
-        # for Pulley 
-        self.IN3 = 26
+        self.IN3 = 26 
         self.IN4 = 19
         self.ENB = 13
         self.ENB_PWM = 0
+
+        # for Pulley 
+        self.IN1 = 20
+        self.IN2 = 21
+        self.ENA = 16
+        self.ENA_PWM = 0
 
         GPIO.setmode(GPIO.BCM)
 
@@ -201,7 +201,7 @@ class Hat:
 
     def PID_Control(self, pwm):
         if self.Enable:
-            if abs ( self._devices['Vertical_Left']['current'] - pwm ) <= 1:
+            if abs ( self._devices['Vertical_Left']['current'] - pwm ) <= 2:
                 return
 
             self._hat.set_pwm(self.channelZ1,0,int(pwm))

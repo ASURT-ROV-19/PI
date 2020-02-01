@@ -37,14 +37,14 @@ class ROV_19:
         self.UDP_Port = 8005
         self.Hat_address = 0x40
         self.Motors_Frequency = 50
-        self.Zero_Vertical = 400
+        self.Zero_Vertical = 305
         self.Qt_String = {'x':0,'y':100,'r':0,'z':0,'cam':0}
         self.hat_delay = 0.000020 # us
-        self.sample_time = 0.015
+        self.sample_time = 0.1
 
-        self.pipeline1 = "v4l2src device=/dev/video0 ! image/jpeg,width=1920,height=1080,framerate=30/1 ! rtpjpegpay ! udpsink host=" + self.Laptop_IP + " port=" + self.stream_Ports[0] 
-        self.pipeline2 = "v4l2src device=/dev/video1 ! image/jpeg,width=1920,height=1080,framerate=30/1 ! rtpjpegpay ! udpsink host=" + self.Laptop_IP + " port=" + self.stream_Ports[2] 
-        self.pipeline3 = "v4l2src device=/dev/video2 ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! udpsink host=10.1.1.14 port=1234"
+        self.pipeline1 = "v4l2src device=/dev/video0 ! image/jpeg,width=1280,height=720 ! rtpjpegpay ! udpsink host=" + self.Laptop_IP + " port=" + self.stream_Ports[0]
+#        self.pipeline2 = "v4l2src device=/dev/video2 ! image/jpeg,width=1280,height=720 ! rtpjpegpay ! udpsink host=" + self.Laptop_IP + " port=" + self.stream_Ports[2]
+#        self.pipeline3 = "v4l2src device=/dev/video2 ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! udpsink host=10.1.1.14 port=1234"
         # for Laptop's Camera
 #        self.pipeline1 = "v4l2src ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! udpsink host=127.0.0.1 port=5022 sync=false"
 #        self.pipeline2 = "v4l2src ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! multiudpsink clients=127.0.0.1:1234,127.0.0.1:5022"
@@ -65,21 +65,20 @@ class ROV_19:
         self.timer = Timer(1)
         self.Camera = Gstreamer(self.pipeline1)
         self.Camera2 = Gstreamer(self.pipeline2)
-        self.Camera3 =Gstreamer(self.pipeline3)
 
         self.Camera.start()
         self.Camera2.start()
 
-        self.hat.add_Device('Left_Front', 5, self.motion.Zero_thruster)
-        self.hat.add_Device('Right_Front', 2, self.motion.Zero_thruster)
-        self.hat.add_Device('Right_Back', 13,self.motion.Zero_thruster)
-        self.hat.add_Device('Left_Back',15 , self.motion.Zero_thruster)
-        self.hat.add_Device('Vertical_Right', 9, self.motion.Zero_thruster)
-        self.hat.add_Device('Vertical_Left', 11, self.motion.Zero_thruster)
+        self.hat.add_Device('Left_Front', 2, self.motion.Zero_thruster)
+        self.hat.add_Device('Right_Front', 1, self.motion.Zero_thruster)
+        self.hat.add_Device('Right_Back', 5,self.motion.Zero_thruster)
+        self.hat.add_Device('Left_Back',6 , self.motion.Zero_thruster)
+        self.hat.add_Device('Vertical_Right', 3, self.motion.Zero_thruster)
+        self.hat.add_Device('Vertical_Left', 4, self.motion.Zero_thruster)
         self.hat.add_Device('Main_Cam',0,self.motion.Zero_Servo)
         self.hat.add_Device('Back_Cam',1,self.motion.Zero_Servo)
         self.hat.add_Device('Magazine_Servo',3,self.motion.Zero_Magazie)
-        self.hat.Raspberry_pi_Power(7,305)
+        self.hat.Raspberry_pi_Power(14,350)
 
         self.motion.SIGNAL_Referance(self.observer_pattern.emit_Signal)
         self.tcp_server.SIGNAL_Referance(self.observer_pattern.emit_Signal)
@@ -104,7 +103,15 @@ class ROV_19:
 
         self.observer_pattern.registerEventListener('Clean_GPIO',self.hat.update)
 
+        self.observer_pattern.registerEventListener('Stop Endo',self.stop_endo)
+
         self.main_Loop()
+
+    def stop_endo(self,event,flag):
+        if flag and self.Camera2.running:
+           self.Camera2.close()
+        elif not flag and not self.Camera2.running:
+           self.Camera2.start()
 
     def selector_print(self):
         conn = self.tcp_server.get_conn()

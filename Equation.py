@@ -10,12 +10,12 @@ class Motion:
         self.emit_signal = None
         self._Qt_String = Qt_String.copy()
         # =========== Constants ===========
-        self.Zero_thruster = 305
+        self.Zero_thruster = 340
         self.Zero_Servo = 225
         self.Servo_min = 100
         self.Servo_max = 360
         self.Servo_max = 390
-        self.Brake = 240
+        self.Brake = 280
         self.Forward = 400
         self.Joystick_min = -100
         self.Joystick_max = 100
@@ -29,7 +29,7 @@ class Motion:
         self.Min_Magazine = -1
 
         self.CoffZ_reverse = 0.7
-        self.CoffZ = 1
+        self.CoffZ = 1.8
         self.camera_step = 5
         self.delay = False
         self.pid_flag = False

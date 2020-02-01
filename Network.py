@@ -1,8 +1,8 @@
 import selectors
 import socket
 from subprocess import PIPE, Popen
-
-
+from VideoStream import *
+import time
 class TCP :
     def __init__(self,selector,ip:str,port:int, streamingIP:str ):
         self._buffer_size = 4096
@@ -19,6 +19,8 @@ class TCP :
         self._selector = selector
         self._create_Socket()
         self._bind_Listen()
+        self.pipeline3 = "v4l2src device=/dev/video1 ! video/x-raw,width=640,height=480,framerate=30/1 ! jpegenc ! rtpjpegpay ! udpsink host=10.1.1.14 port=1234"
+        self.cam= Gstreamer(self.pipeline3)
 
         print(self._selector)
     def SIGNAL_Referance(self,Observer_Pattern_Signal):
@@ -79,15 +81,17 @@ class TCP :
 
     def send_Temp(self,event,sensor_temp):
         # get pi temp
-        print(event)
+#        print(event)
         process = Popen(['vcgencmd', 'measure_temp'], stdout=PIPE)
         output, _error = process.communicate()
-
         pi_temp = output.decode()
         pi_temp = "\nPI_"+pi_temp
-        temp = str(sensor_temp)+' '+str(pi_temp)
-        print("Temp:",temp)
+        print(pi_temp)
+
+        temp = str(sensor_temp)
+#        print("Temp:",temp)
         self._conn.sendall(temp.encode())
+        print("Temp:",temp)
 
     def Check_for_Special_Msgs(self,msg):
         if msg == "PID=1":
@@ -102,7 +106,6 @@ class TCP :
 
         elif msg == "Temp":
             self._emit_Signal("Temp")
-            self._emit_Signal("Send_Temp"," ")
             return True
 
         elif msg == "Micro_ROV 1":
@@ -113,7 +116,7 @@ class TCP :
             return True
 
         elif msg == 'Pulley 1':
-            self._emit_Signal('Pulley',1)
+            self._emit_Signal('Pulley',-1)
             return True
 
         elif msg == 'Pulley 0':
@@ -121,10 +124,24 @@ class TCP :
             return True
 
         elif msg == 'Pulley -1':
-            self._emit_Signal('Pulley',-1)
+            self._emit_Signal('Pulley',1)
             return True
-
-
+        elif msg == 'startMicro':
+            if not self.cam.running:
+               self._emit_Signal('Stop Endo',True)
+               time.sleep(1)
+               self.cam.start()
+               print("Wslt")
+               self.cam.running = True
+               return True
+        elif msg == 'stopMicro':
+            print("msg = stopMicro")
+            if self.cam.running :
+                print("if ray2a")
+                self.cam.close()
+                time.sleep(1)
+                self._emit_Signal('Stop Endo',False)
+                return True
         return False
     def _recv(self):
         data = self._conn.recv(self._buffer_size).decode(encoding="UTF-8")
