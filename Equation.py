@@ -15,8 +15,8 @@ class Motion:
         self.Servo_min = 100
         self.Servo_max = 360
         self.Servo_max = 390
-        self.Brake = 280
-        self.Forward = 400
+        self.Brake = 290
+        self.Forward = 380
         self.Joystick_min = -100
         self.Joystick_max = 100
         self.Rotation_Efficiency = 0.20
@@ -28,8 +28,8 @@ class Motion:
         self.Max_Magazine = 1
         self.Min_Magazine = -1
 
-        self.CoffZ_reverse = 0.7
-        self.CoffZ = 1.8
+        self.CoffZ_reverse = 0.5
+        self.CoffZ = 0.7
         self.camera_step = 5
         self.delay = False
         self.pid_flag = False
@@ -95,18 +95,18 @@ class Motion:
         if x <= 0 and motor == "Left_Front" :
             return self.Zero_thruster + x * self.PWM_Map_Coff_reverse
         elif x <= 0 and motor == "Right_Front" :
-            return self.Zero_thruster + x * self.PWM_Map_Coff_reverse
+            return self.Zero_thruster + x * self.PWM_Map_Coff_reverse * 0.9
         elif x <= 0 and motor == "Right_Back" :
             return self.Zero_thruster + x * self.PWM_Map_Coff_reverse
         elif x <= 0 and motor == "Left_Back" :
-            return self.Zero_thruster + x * self.PWM_Map_Coff_reverse
+            return self.Zero_thruster + x * self.PWM_Map_Coff_reverse * 1.2
 
         elif motor == "Left_Front" :
             return self.Zero_thruster + x * self.PWM_Map_Coff
         elif motor == "Right_Front" :
-            return self.Zero_thruster + x * self.PWM_Map_Coff * 0.8
+            return self.Zero_thruster + x * self.PWM_Map_Coff
         elif motor == "Right_Back" :
-            return self.Zero_thruster + x * self.PWM_Map_Coff * 0.8
+            return self.Zero_thruster + x * self.PWM_Map_Coff
         elif motor == "Left_Back" :
             return self.Zero_thruster + x * self.PWM_Map_Coff
     @staticmethod

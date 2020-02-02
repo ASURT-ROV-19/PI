@@ -43,8 +43,8 @@ class ROV_19:
         self.sample_time = 0.1
 
         self.pipeline1 = "v4l2src device=/dev/video0 ! image/jpeg,width=1280,height=720 ! rtpjpegpay ! udpsink host=" + self.Laptop_IP + " port=" + self.stream_Ports[0]
-#        self.pipeline2 = "v4l2src device=/dev/video2 ! image/jpeg,width=1280,height=720 ! rtpjpegpay ! udpsink host=" + self.Laptop_IP + " port=" + self.stream_Ports[2]
-#        self.pipeline3 = "v4l2src device=/dev/video2 ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! udpsink host=10.1.1.14 port=1234"
+        self.pipeline2 = "v4l2src device=/dev/video2 ! image/jpeg,width=1280,height=720 ! rtpjpegpay ! udpsink host=" + self.Laptop_IP + " port=" + self.stream_Ports[2]
+        self.pipeline3 = "v4l2src device=/dev/video2 ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! udpsink host=10.1.1.14 port=1234"
         # for Laptop's Camera
 #        self.pipeline1 = "v4l2src ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! udpsink host=127.0.0.1 port=5022 sync=false"
 #        self.pipeline2 = "v4l2src ! video/x-raw,width=640,height=480 ! jpegenc ! rtpjpegpay ! multiudpsink clients=127.0.0.1:1234,127.0.0.1:5022"
@@ -150,3 +150,4 @@ class ROV_19:
                 self.tcp_server.hard_Shutdown_Recreate_Socket()
 
 ORCA = ROV_19()
+
