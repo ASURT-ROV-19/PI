@@ -22,8 +22,12 @@ sudo apt-get install python3-gst-1.0
 
 ========== Adafruit PCA9685 ====================
 git clone https://github.com/adafruit/Adafruit_Python_PCA9685.git
+wget https://pypi.python.org/packages/source/s/setuptools/setuptools-3.5.1.zip
+mv setuptools-3.5.1.zip Adafruit_Python_PCA9685/
 cd Adafruit_Python_PCA9685
+sudo pip install requests
 sudo python3 setup.py install
+
 
 =========== Static IP  etc/network /interfaces ===================
 auto eth0
